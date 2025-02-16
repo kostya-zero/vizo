@@ -1,6 +1,11 @@
 use colored::Colorize;
 use std::{fs, path::Path, process::exit};
-use viz::{args::build_cli, processors::{json::JSONProcessor, toml::TOMLProcessor, Processor}, terminal::Messages, values::VizValues};
+use viz::{
+    args::build_cli,
+    processors::{json::JSONProcessor, toml::TOMLProcessor, yaml::YAMLProcessor, Processor},
+    terminal::Messages,
+    values::VizValues,
+};
 
 fn print_object_data(name: &str, object: VizValues, ident: usize) {
     let indent_str = " ".repeat(ident);
@@ -51,10 +56,15 @@ fn main() {
     }
 
     let contents = fs::read_to_string(file_path).unwrap();
-    let ext = file_path.extension().unwrap_or_default().to_str().unwrap_or("");
+    let ext = file_path
+        .extension()
+        .unwrap_or_default()
+        .to_str()
+        .unwrap_or("");
     let parsed_json = match ext {
         "json" => JSONProcessor::process_data(&contents),
         "toml" => TOMLProcessor::process_data(&contents),
+        "yaml" | "yml" => YAMLProcessor::process_data(&contents),
         _ => {
             Messages::error("Unsupported file format!");
             exit(1);

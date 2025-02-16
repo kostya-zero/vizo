@@ -1,6 +1,5 @@
 use super::Processor;
 
-
 /// A processor that processes TOML structured data.
 /// Implements [`crate::processors::Processor`] trait.
 pub struct TOMLProcessor;

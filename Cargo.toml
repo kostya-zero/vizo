@@ -1,6 +1,13 @@
 [package]
 name = "viz"
-version = "0.1.0"
+description = "Visualize structured data formats in a more pretty way."
+authors = ["Konstantin Zhigaylo <zero@kostyazero.com>"]
+readme = "README.md"
+keywords = ["json", "yaml", "toml", "xml", "csv", "pretty", "visualize", "format", "structured", "data"]
+license = "MIT"
+repository = "https://github.com/kostya-zero/viz"
+homepage = "https://github.com/kostya-zero/viz"
+version = "1.0.0"
 edition = "2021"
 
 
@@ -13,3 +20,5 @@ serde = { version = "1.0.217", features = ["derive"] }
 serde_json = { version = "1.0.138", features = ["preserve_order"] }
 thiserror = "2.0.11"
 toml = { version = "0.8.20", features = ["preserve_order"] }
+yaml = { version = "0.10", package = "yaml-rust2" }
+serde_yaml = "0.9.19"
