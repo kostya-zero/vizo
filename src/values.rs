@@ -9,6 +9,8 @@ pub enum VizValues {
     String(String),
     /// Represents integer.
     Number(i64),
+    /// Represents float.
+    Float(f64),
     /// Represents null field.
     Null,
     /// Represents boolean data.
@@ -46,6 +48,31 @@ impl VizValues {
                 VizValues::Object(object)
             },
             _ => VizValues::Null,
+        }
+    }
+
+    pub fn from_serde_json(value: serde_json::Value) -> Self {
+        match value {
+            serde_json::Value::Null => VizValues::Null,
+            serde_json::Value::Bool(b) => VizValues::Bool(b),
+            serde_json::Value::Number(n) => {
+                if n.is_i64() {
+                    VizValues::Number(n.as_i64().unwrap())
+                } else {
+                    VizValues::Float(n.as_f64().unwrap())
+                }
+            },
+            serde_json::Value::String(s) => VizValues::String(s),
+            serde_json::Value::Array(vec) => {
+                VizValues::Array(vec.into_iter().map(VizValues::from_serde_json).collect())
+            },
+            serde_json::Value::Object(map) => {
+                let mut object = IndexMap::new();
+                for (k, v) in map {
+                    object.insert(k, VizValues::from_serde_json(v));
+                }
+                VizValues::Object(object)
+            },
         }
     }
 }

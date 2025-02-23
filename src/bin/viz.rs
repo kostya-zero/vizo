@@ -28,6 +28,12 @@ fn print_object_data(name: &str, object: VizValues, ident: usize) {
             name.bold().white(),
             n.to_string().red()
         ),
+        VizValues::Float(f) => println!(
+            "{}{}: {}",
+            indent_str,
+            name.bold().white(),
+            f.to_string().red()
+        ),
         VizValues::String(s) => println!("{}{}: {}", indent_str, name.bold().white(), s.yellow()),
         VizValues::Object(map) => {
             println!("{}{}: ", indent_str, name.bold().white());
@@ -61,7 +67,7 @@ fn main() {
         .unwrap_or_default()
         .to_str()
         .unwrap_or("");
-    let parsed_json = match ext {
+    let parsed_data = match ext {
         "json" => JSONProcessor::process_data(&contents),
         "toml" => TOMLProcessor::process_data(&contents),
         "yaml" | "yml" => YAMLProcessor::process_data(&contents),
@@ -71,9 +77,17 @@ fn main() {
         }
     };
 
-    if let VizValues::Object(map) = parsed_json {
+    if let Err(e) = parsed_data {
+        Messages::error(&format!("{}", e));
+        exit(1);
+    } 
+
+    if let VizValues::Object(map) = parsed_data.unwrap() {
         for (key, val) in map {
             print_object_data(&key, val, 0);
         }
+    } else {
+        Messages::error("Parsed data is not a valid object.");
+        exit(1);
     }
 }
