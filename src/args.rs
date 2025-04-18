@@ -12,5 +12,11 @@ pub fn build_cli() -> Command {
             .help("Path to the file to view.")
             .value_parser(value_parser!(String))
             .num_args(1)
-            .required(true)])
+            .required(true),
+            Arg::new("indent")
+                .short('i')
+                .long("indent")
+                .help("Indentation level for output.")
+                .value_parser(value_parser!(usize))
+                .default_value("2")])
 }

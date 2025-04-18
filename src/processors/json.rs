@@ -8,9 +8,9 @@ use super::Processor;
 /// Implements [`crate::processors::Processor`] trait.
 pub struct JSONProcessor;
 impl Processor for JSONProcessor {
-    fn process_data(data: &str) -> Result<crate::values::VizValues, Error> {
+    fn process_data(data: &str) -> Result<crate::values::VizValue, Error> {
         let values: Value = serde_json::from_str::<Value>(data).context("Failed to parse JSON data.")?;
 
-        Ok(crate::values::VizValues::from_serde_json(values))
+        Ok(crate::values::VizValue::from_serde_json(values))
     }
 }

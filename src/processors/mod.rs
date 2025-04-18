@@ -1,6 +1,6 @@
 use anyhow::{Error, Result};
 
-use crate::values::VizValues;
+use crate::values::VizValue;
 
 /// A processor for JSON.
 pub mod json;
@@ -13,5 +13,5 @@ pub mod yaml;
 
 /// A base trait for processors.
 pub trait Processor {
-    fn process_data(data: &str) -> Result<VizValues, Error>;
+    fn process_data(data: &str) -> Result<VizValue, Error>;
 }

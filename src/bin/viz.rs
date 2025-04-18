@@ -4,47 +4,47 @@ use viz::{
     args::build_cli,
     processors::{json::JSONProcessor, toml::TOMLProcessor, yaml::YAMLProcessor, Processor},
     terminal::Messages,
-    values::VizValues,
+    values::VizValue,
 };
 
-fn print_object_data(name: &str, object: VizValues, ident: usize) {
-    let indent_str = " ".repeat(ident);
+fn print_object_data(name: &str, object: VizValue, indent: usize, initial_indent: usize) {
+    let indent_str = " ".repeat(indent);
     match object {
-        VizValues::Null => println!(
+        VizValue::Null => println!(
             "{}{}: {}",
             indent_str,
             name.bold().white(),
             "null".bright_black()
         ),
-        VizValues::Bool(b) => println!(
+        VizValue::Bool(b) => println!(
             "{}{}: {}",
             indent_str,
             name.bold().white(),
             b.to_string().blue()
         ),
-        VizValues::Number(n) => println!(
+        VizValue::Number(n) => println!(
             "{}{}: {}",
             indent_str,
             name.bold().white(),
             n.to_string().red()
         ),
-        VizValues::Float(f) => println!(
+        VizValue::Float(f) => println!(
             "{}{}: {}",
             indent_str,
             name.bold().white(),
             f.to_string().red()
         ),
-        VizValues::String(s) => println!("{}{}: {}", indent_str, name.bold().white(), s.yellow()),
-        VizValues::Object(map) => {
+        VizValue::String(s) => println!("{}{}: {}", indent_str, name.bold().white(), s.yellow()),
+        VizValue::Object(map) => {
             println!("{}{}: ", indent_str, name.bold().white());
             for (key, val) in map {
-                print_object_data(&key, val, ident + 2);
+                print_object_data(&key, val, indent + initial_indent, initial_indent);
             }
         }
-        VizValues::Array(vec) => {
+        VizValue::Array(vec) => {
             println!("{}{}: ", indent_str, name.bold().white());
             for (i, item) in vec.into_iter().enumerate() {
-                print_object_data(&format!("[{}]", i), item, ident + 2);
+                print_object_data(&format!("[{}]", i), item, indent + initial_indent, initial_indent);
             }
         }
     }
@@ -55,9 +55,23 @@ fn main() {
     let file = args.get_one::<String>("path").unwrap();
 
     let file_path = Path::new(file);
+    let indent = args
+        .get_one::<usize>("indent")
+        .unwrap_or(&2)
+        .to_owned();
+
+    if indent > 10 {
+        Messages::error("Indentation level must be less than or equal to 10.");
+        exit(1);
+    }
+
+    if indent == 0 {
+        Messages::error("Indentation level must be greater than 0.");
+        exit(1);
+    }
 
     if !file_path.exists() {
-        Messages::error("File not found!");
+        Messages::error("file not found.");
         exit(1);
     }
 
@@ -72,7 +86,7 @@ fn main() {
         "toml" => TOMLProcessor::process_data(&contents),
         "yaml" | "yml" => YAMLProcessor::process_data(&contents),
         _ => {
-            Messages::error("Unsupported file format!");
+            Messages::error("unsupported file format.");
             exit(1);
         }
     };
@@ -82,12 +96,12 @@ fn main() {
         exit(1);
     } 
 
-    if let VizValues::Object(map) = parsed_data.unwrap() {
+    if let VizValue::Object(map) = parsed_data.unwrap() {
         for (key, val) in map {
-            print_object_data(&key, val, 0);
+            print_object_data(&key, val, 0, indent);
         }
     } else {
-        Messages::error("Parsed data is not a valid object.");
+        Messages::error("internal error: parsed data is not a valid object.");
         exit(1);
     }
 }
