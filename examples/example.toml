@@ -1,0 +1,16 @@
+﻿string = "test"
+number = 43
+boolean = true
+array_of_strings = ["test1", "test2"]
+arrya_of_numbers = [1, 2, 3]
+array_of_booleans = [true, false]
+array_of_nulls = ["", ""] # Representing nulls as empty strings, a common workaround.
+
+[[array_of_objects]]
+string = "test1"
+
+[[array_of_objects]]
+string = "test2"
+
+[object]
+string = "test"
