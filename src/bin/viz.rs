@@ -17,42 +17,42 @@ fn print_object_data(
     let indent_str = " ".repeat(indent);
     match object {
         VizValue::Null => println!(
-            "{}\x1b[94m\"{}\"\x1b[0m: {}{}",
+            "{}\"{}\": {}{}",
             indent_str,
-            name,
+            name.blue(),
             "null".bright_black(),
             if is_last { "" } else { "," }
         ),
         VizValue::Bool(b) => println!(
-            "{}\x1b[94m\"{}\"\x1b[0m: {}{}",
+            "{}\"{}\": {}{}",
             indent_str,
-            name,
+            name.blue(),
             b,
             if is_last { "" } else { "," }
         ),
         VizValue::Number(n) => println!(
-            "{}\x1b[94m\"{}\"\x1b[0m: {}{}",
+            "{}\"{}\": {}{}",
             indent_str,
-            name,
+            name.blue(),
             n.to_string().red(),
             if is_last { "" } else { "," }
         ),
         VizValue::Float(f) => println!(
-            "{}\x1b[94m\"{}\"\x1b[0m: {}{}",
+            "{}\"{}\": {}{}",
             indent_str,
-            name,
+            name.blue(),
             f.to_string().red(),
             if is_last { "" } else { "," }
         ),
         VizValue::String(s) => println!(
-            "{}\x1b[94m\"{}\"\x1b[0m: \x1b[92m\"{}\"\x1b[0m{}",
+            "{}\"{}\": \"{}\"{}",
             indent_str,
-            name,
-            s,
+            name.blue(),
+            s.green(),
             if is_last { "" } else { "," }
         ),
         VizValue::Object(map) => {
-            println!("{}\x1b[94m\"{}\"\x1b[0m: {{", indent_str, name);
+            println!("{}\"{}\": {{", indent_str, name.blue());
             let entries: Vec<_> = map.into_iter().collect();
             let total = entries.len();
             for (i, (key, val)) in entries.into_iter().enumerate() {
@@ -62,7 +62,7 @@ fn print_object_data(
             println!("{} }}{}", indent_str, if is_last { "" } else { "," });
         }
         VizValue::Array(vec) => {
-            println!("{}\x1b[94m\"{}\"\x1b[0m: [", indent_str, name);
+            println!("{}\"{}\": [", indent_str, name.blue());
             let total = vec.len();
             for (i, item) in vec.into_iter().enumerate() {
                 let last = i + 1 == total;

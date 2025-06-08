@@ -28,6 +28,9 @@ Go to [GitHub Releases](https://github.com/kostya-zero/viz/releases) and downloa
 
 ## Usage
 
+Viz can be used to visualize data from files or standard input. 
+It automatically detects the format of the data and displays it in a JSON format.
+
 ```
 $ viz Cargo.toml
 {
