@@ -86,7 +86,7 @@ pub fn print_object_data(
                     indent + initial_indent,
                     initial_indent,
                     last,
-                    false,
+                    true,
                 );
             }
             println!("{}}}{}", indent_str, if is_last { "" } else { "," });
