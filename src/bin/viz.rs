@@ -1,4 +1,3 @@
-use colored::Colorize;
 use std::{fs, path::Path, process::exit};
 use viz::{
     args::build_cli,
@@ -7,80 +6,10 @@ use viz::{
     values::VizValue,
 };
 
-fn print_object_data(
-    name: &str,
-    object: VizValue,
-    indent: usize,
-    initial_indent: usize,
-    is_last: bool,
-) {
-    let indent_str = " ".repeat(indent);
-    match object {
-        VizValue::Null => println!(
-            "{}\"{}\": {}{}",
-            indent_str,
-            name.blue(),
-            "null".bright_black(),
-            if is_last { "" } else { "," }
-        ),
-        VizValue::Bool(b) => println!(
-            "{}\"{}\": {}{}",
-            indent_str,
-            name.blue(),
-            b,
-            if is_last { "" } else { "," }
-        ),
-        VizValue::Number(n) => println!(
-            "{}\"{}\": {}{}",
-            indent_str,
-            name.blue(),
-            n.to_string().red(),
-            if is_last { "" } else { "," }
-        ),
-        VizValue::Float(f) => println!(
-            "{}\"{}\": {}{}",
-            indent_str,
-            name.blue(),
-            f.to_string().red(),
-            if is_last { "" } else { "," }
-        ),
-        VizValue::String(s) => println!(
-            "{}\"{}\": \"{}\"{}",
-            indent_str,
-            name.blue(),
-            s.green(),
-            if is_last { "" } else { "," }
-        ),
-        VizValue::Object(map) => {
-            println!("{}\"{}\": {{", indent_str, name.blue());
-            let entries: Vec<_> = map.into_iter().collect();
-            let total = entries.len();
-            for (i, (key, val)) in entries.into_iter().enumerate() {
-                let last = i + 1 == total;
-                print_object_data(&key, val, indent + initial_indent, initial_indent, last);
-            }
-            println!("{} }}{}", indent_str, if is_last { "" } else { "," });
-        }
-        VizValue::Array(vec) => {
-            println!("{}\"{}\": [", indent_str, name.blue());
-            let total = vec.len();
-            for (i, item) in vec.into_iter().enumerate() {
-                let last = i + 1 == total;
-                print_object_data(
-                    &format!("[{}]", i),
-                    item,
-                    indent + initial_indent,
-                    initial_indent,
-                    last,
-                );
-            }
-            println!("{} ]{}", indent_str, if is_last { "" } else { "," });
-        }
-    }
-}
-
 fn main() {
     let args = build_cli().get_matches();
+
+    // Always unwrap because we require the path argument.
     let file = args.get_one::<String>("path").unwrap();
 
     let file_path = Path::new(file);
@@ -91,23 +20,23 @@ fn main() {
         exit(1);
     }
 
-    if indent == 0 {
-        Messages::error("Indentation level must be greater than 0.");
-        exit(1);
-    }
-
     if !file_path.exists() {
         Messages::error("file not found.");
         exit(1);
     }
 
     let contents = fs::read_to_string(file_path).unwrap();
-    let ext = file_path
-        .extension()
-        .unwrap_or_default()
-        .to_str()
-        .unwrap_or("");
-    let parsed_data = match ext {
+    let ext = if let Some(ext) = args.get_one::<String>("language") {
+        ext.to_lowercase()
+    } else {
+        file_path
+            .extension()
+            .and_then(|s| s.to_str())
+            .unwrap_or_default()
+            .to_lowercase()
+    };
+
+    let parsed_data = match ext.as_str() {
         "json" => JSONProcessor::process_data(&contents),
         "toml" => TOMLProcessor::process_data(&contents),
         "yaml" | "yml" => YAMLProcessor::process_data(&contents),
@@ -128,7 +57,7 @@ fn main() {
         let total = entries.len();
         for (i, (key, val)) in entries.into_iter().enumerate() {
             let last = i + 1 == total;
-            print_object_data(&key, val, indent, indent, last);
+            viz::prints::print_object_data(&key, val, indent, indent, last, true);
         }
         println!("}}");
     } else {

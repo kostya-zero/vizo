@@ -14,6 +14,12 @@ pub fn build_cli() -> Command {
                 .value_parser(value_parser!(String))
                 .num_args(1)
                 .required(true),
+            Arg::new("language")
+                .short('l')
+                .long("language")
+                .help("Language of the file to view (e.g., json, toml, yaml).")
+                .value_parser(value_parser!(String))
+                .required(false),
             Arg::new("indent")
                 .short('i')
                 .long("indent")
