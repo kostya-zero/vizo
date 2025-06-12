@@ -10,6 +10,8 @@ pub mod args;
 /// A terminal for Viz app to display data.
 pub mod terminal;
 
+/// A prints module for Viz app to display formatted data.
 pub mod prints;
+
 /// A processors for Viz to process data.
 pub mod processors;

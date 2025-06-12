@@ -6,7 +6,7 @@ boolean: true
 array_of_strings:
   - test1
   - test2
-arrya_of_numbers:
+array_of_numbers:
   - 1
   - 2
   - 3
