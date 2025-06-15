@@ -56,7 +56,7 @@ pub fn print_object_data(
             if is_last { "" } else { "," }
         ),
         VizValue::String(s) => println!(
-            "{}{}{}{}",
+            "{}{}\"{}\"{}",
             indent_str,
             if print_name {
                 format!("\"{}\": ", name.blue())
