@@ -45,3 +45,20 @@ $ viz Cargo.toml
    }
 }
 ```
+
+Also, you can specify the language of the data explicitly:
+
+```
+$ viz Cargo.toml --language toml
+{
+  "package": {
+    "name": "myproject",
+    "version": "0.1.0",
+    "edition": "2024"
+  },
+  "dependencies": {
+    "clap": "4.5.37",
+    "sysinfo": "0.35.0"
+  }
+}
+```
