@@ -1,3 +1,4 @@
+use std::io::{stdin, Read};
 use std::{fs, path::Path, process::exit};
 use viz::{
     args::build_cli,
@@ -7,34 +8,59 @@ use viz::{
 };
 
 fn main() {
+    colored::control::set_override(true);
     let args = build_cli().get_matches();
 
-    // Always unwrap because we require the path argument.
-    let file = args.get_one::<String>("path").unwrap();
+    let file = args
+        .get_one::<String>("path")
+        .map_or_else(String::new, |s| s.to_owned());
 
-    let file_path = Path::new(file);
+    #[allow(unused_assignments)]
+    let mut ext = String::new();
+    let mut contents = String::new();
+
+    if args.get_flag("no-color") {
+        colored::control::set_override(false);
+    } else {
+        colored::control::set_override(true);
+    }
+
+    if !file.is_empty() {
+        let file_path = Path::new(&file);
+        if !file_path.exists() {
+            Messages::error("file not found.");
+            exit(1);
+        }
+        contents.push_str(fs::read_to_string(file_path).unwrap().as_str());
+        if let Some(lang) = args.get_one::<String>("language") {
+            ext = lang.to_lowercase();
+        } else {
+            ext = file_path
+                .extension()
+                .and_then(|s| s.to_str())
+                .unwrap_or_default()
+                .to_lowercase();
+        }
+    } else {
+        let mut input = String::new();
+        stdin()
+            .read_to_string(&mut input)
+            .expect("Failed to read from stdin");
+        contents.push_str(&input);
+        if let Some(lang) = args.get_one::<String>("language") {
+            ext = lang.to_lowercase();
+        } else {
+            Messages::error("no language specified for stdin.");
+            exit(1);
+        }
+    }
+
     let indent = args.get_one::<usize>("indent").unwrap_or(&2).to_owned();
 
     if indent > 10 {
         Messages::error("Indentation level must be less than or equal to 10.");
-        exit(1);
+        exit(1)
     }
-
-    if !file_path.exists() {
-        Messages::error("file not found.");
-        exit(1);
-    }
-
-    let contents = fs::read_to_string(file_path).unwrap();
-    let ext = if let Some(ext) = args.get_one::<String>("language") {
-        ext.to_lowercase()
-    } else {
-        file_path
-            .extension()
-            .and_then(|s| s.to_str())
-            .unwrap_or_default()
-            .to_lowercase()
-    };
 
     let parsed_data = match ext.as_str() {
         "json" => JSONProcessor::process_data(&contents),

@@ -31,7 +31,7 @@ Go to [GitHub Releases](https://github.com/kostya-zero/viz/releases) and downloa
 Viz can be used to visualize data from files or standard input. 
 It automatically detects the format of the data and displays it in a JSON format.
 
-```
+```bash
 $ viz Cargo.toml
 {
   "package": {
@@ -48,18 +48,18 @@ $ viz Cargo.toml
 
 Also, you can specify the language of the data explicitly:
 
-```
+```bash
 $ viz Cargo.toml --language toml
+```
+
+You can pipe data to Viz from standard input, but you need to specify the language of the data:
+
+```bash
+echo '{"name": "John", "age": 30, "city": "New York"}' | viz -l json
 {
-  "package": {
-    "name": "myproject",
-    "version": "0.1.0",
-    "edition": "2024"
-  },
-  "dependencies": {
-    "clap": "4.5.37",
-    "sysinfo": "0.35.0"
-  }
+  "name": "John",
+  "age": 30,
+  "city": "New York"
 }
 ```
 
