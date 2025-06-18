@@ -8,7 +8,6 @@ use viz::{
 };
 
 fn main() {
-    colored::control::set_override(true);
     let args = build_cli().get_matches();
 
     let file = args
