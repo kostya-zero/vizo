@@ -15,3 +15,6 @@ pub mod prints;
 
 /// A processors for Viz to process data.
 pub mod processors;
+
+// An application module.
+pub mod app;
