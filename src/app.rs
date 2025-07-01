@@ -3,10 +3,10 @@ use crate::processors::json::JSONProcessor;
 use crate::processors::toml::TOMLProcessor;
 use crate::processors::yaml::YAMLProcessor;
 use crate::processors::Processor;
-use crate::terminal::Messages;
 use crate::values::VizValue;
 use anyhow::{anyhow, bail, Result};
 use clap::ArgMatches;
+use colored::Colorize;
 use std::env::var;
 use std::fs;
 use std::io::{stdin, Read};
@@ -98,9 +98,9 @@ fn get_indent(args: &ArgMatches) -> Result<usize> {
 
 fn get_parsed_data(contents: &str, extension: &str) -> Result<VizValue> {
     let parsed_data = match extension {
-        "json" => JSONProcessor::process_data(&contents),
-        "toml" => TOMLProcessor::process_data(&contents),
-        "yaml" | "yml" => YAMLProcessor::process_data(&contents),
+        "json" => JSONProcessor::process_data(contents),
+        "toml" => TOMLProcessor::process_data(contents),
+        "yaml" | "yml" => YAMLProcessor::process_data(contents),
         _ => {
             return Err(anyhow!("unsupported file format."));
         }
@@ -120,7 +120,10 @@ fn print_parsed_data(data: VizValue, indent: usize) {
         }
         println!("}}");
     } else {
-        Messages::error("internal error: parsed data is not a valid object.");
+        println!(
+            "{}: parsed data is not a valid object.",
+            "error".red().bold()
+        );
         exit(1);
     }
 }
