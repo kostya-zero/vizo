@@ -1,11 +1,11 @@
-﻿use crate::args::build_cli;
+﻿use crate::args::Cli;
 use crate::processors::json::JSONProcessor;
 use crate::processors::toml::TOMLProcessor;
 use crate::processors::yaml::YAMLProcessor;
 use crate::processors::Processor;
 use crate::values::VizValue;
 use anyhow::{anyhow, bail, Result};
-use clap::ArgMatches;
+use clap::Parser;
 use colored::Colorize;
 use std::env::var;
 use std::fs;
@@ -14,12 +14,12 @@ use std::path::Path;
 use std::process::exit;
 
 pub fn run() -> Result<()> {
-    let args = build_cli().get_matches();
+    let cli = Cli::parse();
 
-    configure_colors(&args);
+    configure_colors(&cli);
 
-    let (contents, extension) = get_content_and_extension(&args)?;
-    let indent = get_indent(&args)?;
+    let (contents, extension) = get_content_and_extension(&cli)?;
+    let indent = get_indent(&cli)?;
     let data = get_parsed_data(&contents, &extension)?;
 
     print_parsed_data(data, indent);
@@ -27,36 +27,33 @@ pub fn run() -> Result<()> {
     Ok(())
 }
 
-fn configure_colors(args: &ArgMatches) {
+fn configure_colors(cli: &Cli) {
     let no_color = var("NO_COLOR");
 
     if no_color.is_ok() {
         colored::control::set_override(false);
     } else {
-        colored::control::set_override(!args.get_flag("no-color"));
+        colored::control::set_override(cli.no_color);
     }
 }
 
-fn get_content_and_extension(args: &ArgMatches) -> Result<(String, String)> {
-    let file_path = args
-        .get_one::<String>("path")
-        .map(|s| s.as_str())
-        .unwrap_or("");
+fn get_content_and_extension(cli: &Cli) -> Result<(String, String)> {
+    let file_path = cli.path.clone().unwrap_or_default();
 
     if file_path.is_empty() {
-        get_from_stdin(args)
+        get_from_stdin(cli)
     } else {
-        get_file_content(file_path)
+        get_file_content(&file_path)
     }
 }
 
-fn get_from_stdin(args: &ArgMatches) -> Result<(String, String)> {
+fn get_from_stdin(cli: &Cli) -> Result<(String, String)> {
     let mut contents = String::new();
     stdin()
         .read_to_string(&mut contents)
         .map_err(|e| anyhow!("failed to read from stdin: {}", e.to_string()))?;
 
-    if let Some(lang) = args.get_one::<String>("language") {
+    if let Some(lang) = &cli.language {
         Ok((contents, lang.clone()))
     } else {
         bail!("language is not specified for stdin")
@@ -84,16 +81,14 @@ fn get_file_content(file_path: &str) -> Result<(String, String)> {
     Ok((contents, ext))
 }
 
-fn get_indent(args: &ArgMatches) -> Result<usize> {
-    let indent = *args.get_one::<usize>("indent").unwrap_or(&2);
+fn get_indent(cli: &Cli) -> Result<usize> {
+    let indent = &cli.indent;
 
-    if indent > 10 {
-        return Err(anyhow!(
-            "indentation level must be less than or equal to 10."
-        ));
+    if *indent > 10 {
+        return Err(anyhow!("indentation level must be less than or equal 10."));
     }
 
-    Ok(indent)
+    Ok(*indent)
 }
 
 fn get_parsed_data(contents: &str, extension: &str) -> Result<VizValue> {

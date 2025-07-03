@@ -1,35 +1,23 @@
 use std::env;
 
-use clap::{value_parser, Arg, Command};
+use clap::Parser;
 
 /// A CLI builder for Viz app.
-pub fn build_cli() -> Command {
-    Command::new("vel")
-        .about(env!("CARGO_PKG_DESCRIPTION"))
-        .version(env!("CARGO_PKG_VERSION"))
-        .args([
-            Arg::new("path")
-                .help("Path to the file to view.")
-                .value_parser(value_parser!(String))
-                .required(false),
-            Arg::new("language")
-                .short('l')
-                .long("language")
-                .help("Language of the file to view (e.g., json, toml, yaml).")
-                .value_parser(value_parser!(String))
-                .required(false),
-            Arg::new("no-color")
-                .short('n')
-                .long("no-color")
-                .help("Disable colored output.")
-                .action(clap::ArgAction::SetTrue)
-                .required(false),
-            Arg::new("indent")
-                .short('i')
-                .long("indent")
-                .help("Indentation level for output.")
-                .value_parser(value_parser!(usize))
-                .default_value("2")
-                .required(false),
-        ])
+#[derive(Parser, Debug)]
+#[command( name = "viz", about = env!("CARGO_PKG_DESCRIPTION"), version = env!("CARGO_PKG_VERSION"))]
+pub struct Cli {
+    /// Path to the file to view
+    pub path: Option<String>,
+
+    /// Language of the file to view (e.g., json, toml, yaml).
+    #[arg(short, long)]
+    pub language: Option<String>,
+
+    /// Disable colored output.
+    #[arg(long = "no-color", short= 'n', action = clap::ArgAction::SetTrue)]
+    pub no_color: bool,
+
+    /// Indentation level for output.
+    #[arg(short, long, default_value_t = 2)]
+    pub indent: usize,
 }

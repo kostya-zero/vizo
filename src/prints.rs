@@ -25,7 +25,7 @@ pub fn print_object_data(
             );
         }
         VizValue::Bool(b) => {
-            println!("{}{}{}{}", indent_str, name_prefix, b, comma_suffix);
+            println!("{indent_str}{name_prefix}{b}{comma_suffix}");
         }
         VizValue::Number(n) => {
             println!(
@@ -94,7 +94,7 @@ fn print_object(
     initial_indent: usize,
     is_last: bool,
 ) {
-    println!("{}{}{{", indent_str, name_prefix);
+    println!("{indent_str}{name_prefix}{{");
 
     let entries: Vec<_> = map.into_iter().collect();
     let total = entries.len();
@@ -111,7 +111,7 @@ fn print_object(
         );
     }
 
-    println!("{}}}{}", indent_str, format_comma_suffix(is_last));
+    println!("{indent_str}}}{}", format_comma_suffix(is_last));
 }
 
 fn print_array(
@@ -137,5 +137,5 @@ fn print_array(
         );
     }
 
-    println!("{}]{}", indent_str, format_comma_suffix(is_last));
+    println!("{indent_str}]{}", format_comma_suffix(is_last));
 }
