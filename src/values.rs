@@ -49,29 +49,4 @@ impl VizValue {
             _ => VizValue::Null,
         }
     }
-
-    pub fn from_serde_json(value: serde_json::Value) -> Self {
-        match value {
-            serde_json::Value::Null => VizValue::Null,
-            serde_json::Value::Bool(b) => VizValue::Bool(b),
-            serde_json::Value::Number(n) => {
-                if n.is_i64() {
-                    VizValue::Number(n.as_i64().unwrap())
-                } else {
-                    VizValue::Float(n.as_f64().unwrap())
-                }
-            }
-            serde_json::Value::String(s) => VizValue::String(s),
-            serde_json::Value::Array(vec) => {
-                VizValue::Array(vec.into_iter().map(VizValue::from_serde_json).collect())
-            }
-            serde_json::Value::Object(map) => {
-                let mut object = IndexMap::new();
-                for (k, v) in map {
-                    object.insert(k, VizValue::from_serde_json(v));
-                }
-                VizValue::Object(object)
-            }
-        }
-    }
 }
