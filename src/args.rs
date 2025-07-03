@@ -4,7 +4,7 @@ use clap::Parser;
 
 /// A CLI builder for Viz app.
 #[derive(Parser, Debug)]
-#[command( name = "viz", about = env!("CARGO_PKG_DESCRIPTION"), version = env!("CARGO_PKG_VERSION"))]
+#[command(name = "viz", about = env!("CARGO_PKG_DESCRIPTION"), version = env!("CARGO_PKG_VERSION"))]
 pub struct Cli {
     /// Path to the file to view
     pub path: Option<String>,
@@ -14,7 +14,7 @@ pub struct Cli {
     pub language: Option<String>,
 
     /// Disable colored output.
-    #[arg(long = "no-color", short= 'n', action = clap::ArgAction::SetTrue)]
+    #[arg(short = 'n', long = "no-color", action = clap::ArgAction::SetTrue)]
     pub no_color: bool,
 
     /// Indentation level for output.

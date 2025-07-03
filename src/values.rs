@@ -27,15 +27,14 @@ impl VizValue {
             yaml::Yaml::Null => VizValue::Null,
             yaml::Yaml::Boolean(b) => VizValue::Bool(b),
             yaml::Yaml::Integer(i) => VizValue::Number(i),
-            yaml::Yaml::Real(s) => {
-                s.parse::<f64>()
-                 .map(|f| VizValue::Number(f as i64))
-                 .unwrap_or(VizValue::Null)
-            },
+            yaml::Yaml::Real(s) => s
+                .parse::<f64>()
+                .map(|f| VizValue::Number(f as i64))
+                .unwrap_or(VizValue::Null),
             yaml::Yaml::String(s) => VizValue::String(s),
             yaml::Yaml::Array(seq) => {
                 VizValue::Array(seq.into_iter().map(VizValue::from_yaml).collect())
-            },
+            }
             yaml::Yaml::Hash(map) => {
                 let mut object = IndexMap::new();
                 for (k, v) in map {
@@ -46,7 +45,7 @@ impl VizValue {
                     object.insert(key, VizValue::from_yaml(v));
                 }
                 VizValue::Object(object)
-            },
+            }
             _ => VizValue::Null,
         }
     }
@@ -61,18 +60,18 @@ impl VizValue {
                 } else {
                     VizValue::Float(n.as_f64().unwrap())
                 }
-            },
+            }
             serde_json::Value::String(s) => VizValue::String(s),
             serde_json::Value::Array(vec) => {
                 VizValue::Array(vec.into_iter().map(VizValue::from_serde_json).collect())
-            },
+            }
             serde_json::Value::Object(map) => {
                 let mut object = IndexMap::new();
                 for (k, v) in map {
                     object.insert(k, VizValue::from_serde_json(v));
                 }
                 VizValue::Object(object)
-            },
+            }
         }
     }
 }
