@@ -1,8 +1,5 @@
 ﻿use crate::args::Cli;
-use crate::processors::json::JSONProcessor;
-use crate::processors::toml::TOMLProcessor;
-use crate::processors::yaml::YAMLProcessor;
-use crate::processors::Processor;
+use crate::processors::*;
 use crate::values::VizValue;
 use anyhow::{anyhow, bail, Result};
 use clap::Parser;
@@ -93,9 +90,9 @@ fn get_indent(cli: &Cli) -> Result<usize> {
 
 fn get_parsed_data(contents: &str, extension: &str) -> Result<VizValue> {
     let parsed_data = match extension {
-        "json" => JSONProcessor::process_data(contents),
-        "toml" => TOMLProcessor::process_data(contents),
-        "yaml" | "yml" => YAMLProcessor::process_data(contents),
+        "json" => json::JSONProcessor::process_data(contents),
+        "toml" => toml::TOMLProcessor::process_data(contents),
+        "yaml" | "yml" => yaml::YAMLProcessor::process_data(contents),
         _ => {
             return Err(anyhow!("unsupported file format."));
         }
