@@ -30,7 +30,7 @@ fn configure_colors(cli: &Cli) {
     if no_color.is_ok() {
         colored::control::set_override(false);
     } else {
-        colored::control::set_override(cli.no_color);
+        colored::control::set_override(!cli.no_color);
     }
 }
 
