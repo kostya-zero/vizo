@@ -7,8 +7,8 @@ keywords = ["pretty", "visualize", "format", "structured", "data"]
 license = "MIT"
 repository = "https://github.com/kostya-zero/vizo"
 homepage = "https://github.com/kostya-zero/vizo"
-version = "1.0.0-rc1"
-edition = "2021"
+version = "1.0.0"
+edition = "2024"
 
 [dependencies]
 anyhow = "1.0.95"
@@ -19,3 +19,15 @@ serde = { version = "1.0.217", features = ["derive"] }
 serde_json = { version = "1.0.138", features = ["preserve_order"] }
 toml = { version = "0.8.20", features = ["preserve_order"] }
 yaml = { version = "0.10", package = "yaml-rust2" }
+
+[profile.dev]
+incremental = false
+
+[profile.release]
+panic = "abort"
+opt-level = 3
+codegen-units = 1
+incremental = false
+lto = "thin"
+debug = 0
+strip = true
