@@ -1,4 +1,4 @@
-﻿use crate::values::VizValue;
+use crate::values::VizValue;
 use colored::Colorize;
 use indexmap::IndexMap;
 
@@ -79,11 +79,7 @@ fn format_name_prefix(name: &str, print_name: bool) -> String {
 }
 
 fn format_comma_suffix(is_last: bool) -> &'static str {
-    if is_last {
-        ""
-    } else {
-        ","
-    }
+    if is_last { "" } else { "," }
 }
 
 fn print_object(

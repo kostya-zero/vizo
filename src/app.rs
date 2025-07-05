@@ -1,12 +1,12 @@
-﻿use crate::args::Cli;
+use crate::args::Cli;
 use crate::processors::*;
 use crate::values::VizValue;
-use anyhow::{anyhow, bail, Result};
+use anyhow::{Result, anyhow, bail};
 use clap::Parser;
 use colored::Colorize;
 use std::env::var;
 use std::fs;
-use std::io::{stdin, Read};
+use std::io::{Read, stdin};
 use std::path::Path;
 use std::process::exit;
 
