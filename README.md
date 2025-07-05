@@ -19,7 +19,7 @@ It supports any type of the values, including:
 ##### With Cargo
 
 ```bash
-cargo install viz
+cargo install vizo
 ```
 
 ##### From GitHub Releases
