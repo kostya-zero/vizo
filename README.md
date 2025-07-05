@@ -1,8 +1,8 @@
-﻿# Viz
+﻿# `vizo`
 
-Viz is a command line tool that can be used to visualize structured data in a more readable format. 
+Vizo is a command line tool that can be used to visualize structured data in a more readable format. 
 It is designed to be simple and easy to use, with a focus on providing a clear and concise representation of the data.
-Viz supports most of the popular data formats, including JSON, YAML, and TOML.
+Vizo supports most of the popular data formats, including JSON, YAML, and TOML.
 
 It supports any type of the values, including:
 
@@ -28,11 +28,11 @@ Go to [GitHub Releases](https://github.com/kostya-zero/viz/releases) and downloa
 
 ## Usage
 
-Viz can be used to visualize data from files or standard input. 
+Vizo can be used to visualize data from files or standard input. 
 It automatically detects the format of the data and displays it in a JSON format.
 
 ```bash
-$ viz Cargo.toml
+$ vizo Cargo.toml
 {
   "package": {
     "name": "myproject",
@@ -49,13 +49,13 @@ $ viz Cargo.toml
 Also, you can specify the language of the data explicitly:
 
 ```bash
-$ viz Cargo.toml --language toml
+$ vizo Cargo.toml --language toml
 ```
 
-You can pipe data to Viz from standard input, but you need to specify the language of the data:
+You can pipe data to Vizo from standard input, but you need to specify the language of the data:
 
 ```bash
-echo '{"name": "John", "age": 30, "city": "New York"}' | viz -l json
+echo '{"name": "John", "age": 30, "city": "New York"}' | vizo -l json
 {
   "name": "John",
   "age": 30,
@@ -65,4 +65,4 @@ echo '{"name": "John", "age": 30, "city": "New York"}' | viz -l json
 
 ## License
 
-Viz is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+Vizo is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.

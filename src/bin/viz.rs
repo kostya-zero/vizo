@@ -1,5 +1,5 @@
 use colored::Colorize;
-use viz::app::run;
+use vizo::app::run;
 
 fn main() {
     if let Err(e) = run() {

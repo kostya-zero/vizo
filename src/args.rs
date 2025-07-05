@@ -2,9 +2,9 @@ use std::env;
 
 use clap::Parser;
 
-/// A CLI builder for Viz app.
+/// A CLI builder for Vizo app.
 #[derive(Parser, Debug)]
-#[command(name = "viz", about = env!("CARGO_PKG_DESCRIPTION"), version = env!("CARGO_PKG_VERSION"))]
+#[command(name = "vizo", about = env!("CARGO_PKG_DESCRIPTION"), version = env!("CARGO_PKG_VERSION"))]
 pub struct Cli {
     /// Path to the file to view
     pub path: Option<String>,
