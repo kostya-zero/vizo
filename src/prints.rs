@@ -1,137 +1,99 @@
 use crate::values::VizValue;
 use colored::Colorize;
-use indexmap::IndexMap;
+
+#[derive(PartialEq, Eq)]
+pub enum DisplayOption {
+    Key,
+    ArrayElement,
+    None,
+}
 
 pub fn print_object_data(
     name: &str,
-    object: VizValue,
+    value: VizValue,
     indent: usize,
-    initial_indent: usize,
-    is_last: bool,
-    print_name: bool,
+    indent_step: usize,
+    display_option: DisplayOption,
 ) {
     let indent_str = " ".repeat(indent);
-    let name_prefix = format_name_prefix(name, print_name);
-    let comma_suffix = format_comma_suffix(is_last);
 
-    match object {
-        VizValue::Null => {
-            println!(
-                "{}{}{}{}",
-                indent_str,
-                name_prefix,
-                "null".bright_black(),
-                comma_suffix
-            );
-        }
-        VizValue::Bool(b) => {
-            println!("{indent_str}{name_prefix}{b}{comma_suffix}");
-        }
-        VizValue::Number(n) => {
-            println!(
-                "{}{}{}{}",
-                indent_str,
-                name_prefix,
-                n.to_string().red(),
-                comma_suffix
-            );
-        }
-        VizValue::Float(f) => {
-            println!(
-                "{}{}{}{}",
-                indent_str,
-                name_prefix,
-                f.to_string().red(),
-                comma_suffix
-            );
-        }
-        VizValue::String(s) => {
-            println!(
-                "{}{}\"{}\"{}",
-                indent_str,
-                name_prefix,
-                s.green(),
-                comma_suffix
-            );
-        }
+    match value {
+        VizValue::Null => match display_option {
+            DisplayOption::Key => println!("{}{}: {}", indent_str, name.blue(), "~".bright_black()),
+            DisplayOption::ArrayElement => println!("{}- {}", indent_str, "~".bright_black()),
+            DisplayOption::None => println!("{}{}", indent_str, "~".bright_black()),
+        },
+        VizValue::Bool(b) => match display_option {
+            DisplayOption::Key => println!("{}{}: {}", indent_str, name.blue(), b),
+            DisplayOption::ArrayElement => println!("{}- {}", indent_str, b),
+            DisplayOption::None => println!("{}{}", indent_str, b),
+        },
+        VizValue::Number(n) => match display_option {
+            DisplayOption::Key => {
+                println!("{}{}: {}", indent_str, name.blue(), n.to_string().red())
+            }
+            DisplayOption::ArrayElement => println!("{}- {}", indent_str, n.to_string().red()),
+            DisplayOption::None => println!("{}{}", indent_str, n.to_string().red()),
+        },
+        VizValue::Float(f) => match display_option {
+            DisplayOption::Key => {
+                println!("{}{}: {}", indent_str, name.blue(), f.to_string().red())
+            }
+            DisplayOption::ArrayElement => println!("{}- {}", indent_str, f.to_string().red()),
+            DisplayOption::None => println!("{}{}", indent_str, f.to_string().red()),
+        },
+        VizValue::String(s) => match display_option {
+            DisplayOption::Key => println!("{}{}: \"{}\"", indent_str, name.blue(), s.green()),
+            DisplayOption::ArrayElement => println!("{}- \"{}\"", indent_str, s.green()),
+            DisplayOption::None => println!("{}\"{}\"", indent_str, s.green()),
+        },
         VizValue::Object(map) => {
-            print_object(
-                &indent_str,
-                &name_prefix,
-                map,
-                indent,
-                initial_indent,
-                is_last,
-            );
+            // Print the key if this is a key-value pair
+            if display_option == DisplayOption::Key {
+                println!("{}{}:", indent_str, name.blue());
+            } else if display_option == DisplayOption::ArrayElement {
+                println!("{}:", indent_str);
+            }
+
+            let next_indent = indent + indent_step;
+            for (k, v) in map.into_iter() {
+                print_object_data(&k, v, next_indent, indent_step, DisplayOption::Key);
+            }
         }
         VizValue::Array(vec) => {
-            print_array(&indent_str, name, vec, indent, initial_indent, is_last);
+            // Print the key if this is a key-value pair
+            if display_option == DisplayOption::Key {
+                println!("{}{}:", indent_str, name.blue());
+            } else if display_option == DisplayOption::ArrayElement {
+                println!("{}:", indent_str);
+            }
+
+            let next_indent = indent + indent_step;
+            for item in vec.into_iter() {
+                match item {
+                    VizValue::Object(_) | VizValue::Array(_) => {
+                        // Complex items: print dash and then the nested structure
+                        print!("{}- ", " ".repeat(next_indent));
+                        print_object_data(
+                            "",
+                            item,
+                            next_indent + 2,
+                            indent_step,
+                            DisplayOption::None,
+                        );
+                    }
+                    scalar => {
+                        // Scalar items: print with dash prefix
+                        print_object_data(
+                            "",
+                            scalar,
+                            next_indent,
+                            indent_step,
+                            DisplayOption::ArrayElement,
+                        );
+                    }
+                }
+            }
         }
     }
-}
-
-fn format_name_prefix(name: &str, print_name: bool) -> String {
-    if print_name {
-        format!("\"{}\": ", name.blue())
-    } else {
-        String::new()
-    }
-}
-
-fn format_comma_suffix(is_last: bool) -> &'static str {
-    if is_last { "" } else { "," }
-}
-
-fn print_object(
-    indent_str: &str,
-    name_prefix: &str,
-    map: IndexMap<String, VizValue>,
-    indent: usize,
-    initial_indent: usize,
-    is_last: bool,
-) {
-    println!("{indent_str}{name_prefix}{{");
-
-    let entries: Vec<_> = map.into_iter().collect();
-    let total = entries.len();
-
-    for (i, (key, val)) in entries.into_iter().enumerate() {
-        let is_last_entry = i + 1 == total;
-        print_object_data(
-            &key,
-            val,
-            indent + initial_indent,
-            initial_indent,
-            is_last_entry,
-            true,
-        );
-    }
-
-    println!("{indent_str}}}{}", format_comma_suffix(is_last));
-}
-
-fn print_array(
-    indent_str: &str,
-    name: &str,
-    vec: Vec<VizValue>,
-    indent: usize,
-    initial_indent: usize,
-    is_last: bool,
-) {
-    println!("{}\"{}\": [", indent_str, name.blue());
-
-    let total = vec.len();
-    for (i, item) in vec.into_iter().enumerate() {
-        let is_last_entry = i + 1 == total;
-        print_object_data(
-            &format!("[{}]", i + 1),
-            item,
-            indent + initial_indent,
-            initial_indent,
-            is_last_entry,
-            false,
-        );
-    }
-
-    println!("{indent_str}]{}", format_comma_suffix(is_last));
 }

@@ -1,4 +1,5 @@
 use crate::args::Cli;
+use crate::prints::DisplayOption;
 use crate::processors::*;
 use crate::values::VizValue;
 use anyhow::{Result, anyhow, bail};
@@ -103,14 +104,10 @@ fn get_parsed_data(contents: &str, extension: &str) -> Result<VizValue> {
 
 fn print_parsed_data(data: VizValue, indent: usize) {
     if let VizValue::Object(map) = data {
-        println!("{{");
         let entries: Vec<_> = map.into_iter().collect();
-        let total = entries.len();
-        for (i, (key, val)) in entries.into_iter().enumerate() {
-            let last = i + 1 == total;
-            crate::prints::print_object_data(&key, val, indent, indent, last, true);
+        for (key, val) in entries.into_iter() {
+            crate::prints::print_object_data(&key, val, 0, indent, DisplayOption::Key);
         }
-        println!("}}");
     } else {
         println!(
             "{}: parsed data is not a valid object.",

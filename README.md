@@ -1,6 +1,6 @@
 ﻿# `vizo`
 
-Vizo is a command line tool that can be used to visualize structured data in a more readable format. 
+Vizo is a command line tool that can be used to visualize structured data in a more readable format.
 It is designed to be simple and easy to use, with a focus on providing a clear and concise representation of the data.
 Vizo supports most of the popular data formats, including JSON, YAML, and TOML.
 
@@ -28,22 +28,19 @@ Go to [GitHub Releases](https://github.com/kostya-zero/viz/releases) and downloa
 
 ## Usage
 
-Vizo can be used to visualize data from files or standard input. 
-It automatically detects the format of the data and displays it in a JSON format.
+Vizo can be used to visualize data from files or standard input.
+It automatically detects the format of the data and displays it in a YAML format.
 
 ```bash
 $ vizo Cargo.toml
-{
-  "package": {
-    "name": "myproject",
-    "version": "0.1.0",
-    "edition": "2024"                                                                                                                                                                                                                 
-   },
-  "dependencies": {
-    "clap": "4.5.37",
-    "sysinfo": "0.35.0"                                                                                                                                                                                                               
-   }
-}
+
+package:
+    name: "myproject"
+    version: "0.1.0"
+    edition: "2024"                                                                                                                                                                                                                 
+dependencies: 
+    clap: "4.5.37"
+    sysinfo: "0.35.0"                                                                                                                                                                                                               
 ```
 
 Also, you can specify the language of the data explicitly:
@@ -56,11 +53,9 @@ You can pipe data to Vizo from standard input, but you need to specify the langu
 
 ```bash
 echo '{"name": "John", "age": 30, "city": "New York"}' | vizo -l json
-{
-  "name": "John",
-  "age": 30,
-  "city": "New York"
-}
+name: "John"
+age: 30
+city: "New York"
 ```
 
 ## License
