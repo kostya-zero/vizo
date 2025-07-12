@@ -1,13 +1,13 @@
 use crate::args::Cli;
-use crate::prints::DisplayOption;
+use crate::prints::DisplayType;
 use crate::processors::*;
 use crate::values::VizValue;
-use anyhow::{Result, anyhow, bail};
+use anyhow::{anyhow, bail, Result};
 use clap::Parser;
 use colored::Colorize;
 use std::env::var;
 use std::fs;
-use std::io::{Read, stdin};
+use std::io::{stdin, Read};
 use std::path::Path;
 use std::process::exit;
 
@@ -24,7 +24,6 @@ pub fn run() -> Result<()> {
 
     Ok(())
 }
-
 fn configure_colors(cli: &Cli) {
     let no_color = var("NO_COLOR");
 
@@ -106,7 +105,7 @@ fn print_parsed_data(data: VizValue, indent: usize) {
     if let VizValue::Object(map) = data {
         let entries: Vec<_> = map.into_iter().collect();
         for (key, val) in entries.into_iter() {
-            crate::prints::print_object_data(&key, val, 0, indent, DisplayOption::Key);
+            crate::prints::print_prettij(&key, val, 0, indent, DisplayType::Key);
         }
     } else {
         println!(

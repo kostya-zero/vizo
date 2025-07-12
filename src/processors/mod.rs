@@ -13,5 +13,6 @@ pub mod yaml;
 
 /// A base trait for processors.
 pub trait Processor {
+    /// Processes the data and returns a `VizValue`.
     fn process_data(data: &str) -> Result<VizValue, Error>;
 }

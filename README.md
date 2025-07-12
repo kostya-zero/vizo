@@ -28,19 +28,23 @@ Go to [GitHub Releases](https://github.com/kostya-zero/viz/releases) and downloa
 
 ## Usage
 
-Vizo can be used to visualize data from files or standard input.
-It automatically detects the format of the data and displays it in a YAML format.
+Vizo can be used to visualize data from files or standard input.  
+It automatically detects the data format and displays it using the Prettij markup language.  
+Prettij is specifically designed for Vizo to present data in a way that's easy to understand.  
+It uses syntax patterns inspired by JSON, YAML, and TOML.
 
 ```bash
 $ vizo Cargo.toml
 
-package:
-    name: "myproject"
-    version: "0.1.0"
-    edition: "2024"                                                                                                                                                                                                                 
-dependencies: 
-    clap: "4.5.37"
-    sysinfo: "0.35.0"                                                                                                                                                                                                               
+package = {
+    name =  "myproject"
+    version = "0.1.0"
+    edition = "2024"    
+}                                                                                                                                                                                                        
+dependencies = {
+    clap = "4.5.37"
+    sysinfo = "0.35.0"            
+}                                                                                                                                                                                                   
 ```
 
 Also, you can specify the language of the data explicitly:
@@ -52,11 +56,16 @@ $ vizo Cargo.toml --language toml
 You can pipe data to Vizo from standard input, but you need to specify the language of the data:
 
 ```bash
-echo '{"name": "John", "age": 30, "city": "New York"}' | vizo -l json
-name: "John"
-age: 30
-city: "New York"
+$ echo '{"name": "John", "age": 30, "city": "New York"}' | vizo -l json
+
+name = "John"
+age = 30
+city = "New York"
 ```
+
+## About Prettij
+
+TBW
 
 ## License
 
