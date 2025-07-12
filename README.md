@@ -28,9 +28,9 @@ Go to [GitHub Releases](https://github.com/kostya-zero/viz/releases) and downloa
 
 ## Usage
 
-Vizo can be used to visualize data from files or standard input.  
-It automatically detects the data format and displays it using the Prettij markup language.  
-Prettij is specifically designed for Vizo to present data in a way that's easy to understand.  
+Vizo can be used to visualize data from files or standard input.
+It automatically detects the data format and displays it using the Prettij markup language.
+Prettij is specifically designed for Vizo to present data in a way that's easy to understand.
 It uses syntax patterns inspired by JSON, YAML, and TOML.
 
 ```bash
