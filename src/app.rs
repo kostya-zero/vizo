@@ -2,12 +2,12 @@ use crate::args::Cli;
 use crate::prints::DisplayType;
 use crate::processors::*;
 use crate::values::VizValue;
-use anyhow::{anyhow, bail, Result};
+use anyhow::{Result, anyhow, bail};
 use clap::Parser;
 use colored::Colorize;
 use std::env::var;
 use std::fs;
-use std::io::{stdin, Read};
+use std::io::{Read, stdin};
 use std::path::Path;
 use std::process::exit;
 
@@ -105,7 +105,7 @@ fn print_parsed_data(data: VizValue, indent: usize) {
     if let VizValue::Object(map) = data {
         let entries: Vec<_> = map.into_iter().collect();
         for (key, val) in entries.into_iter() {
-            crate::prints::print_prettij(&key, val, 0, indent, DisplayType::Key);
+            crate::prints::print_prettij(&key, val, 0, indent, DisplayType::Key, false);
         }
     } else {
         println!(

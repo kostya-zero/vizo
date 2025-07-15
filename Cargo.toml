@@ -22,6 +22,7 @@ yaml = { version = "0.10", package = "yaml-rust2" }
 
 [profile.dev]
 incremental = false
+lto = false
 
 [profile.release]
 panic = "abort"

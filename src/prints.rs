@@ -18,15 +18,21 @@ pub fn print_prettij(
     initial_indent: usize,
     indent_step: usize,
     display_type: DisplayType,
+    is_last: bool,
 ) {
     let indent_str = " ".repeat(initial_indent);
     match value {
         VizValue::String(s) => match display_type {
             DisplayType::Key => {
-                println!("{}{} = \"{}\"", indent_str, name.blue(), s.green());
+                println!("{}{} = \"{}\"", indent_str, name.blue(), s.green(),);
             }
             DisplayType::ArrayElement => {
-                println!("{}\"{}\"", indent_str, s.green());
+                println!(
+                    "{}\"{}\"{}",
+                    indent_str,
+                    s.green(),
+                    if !is_last { "," } else { "" }
+                );
             }
         },
         VizValue::Number(n) => match display_type {
@@ -34,7 +40,12 @@ pub fn print_prettij(
                 println!("{}{} = {}", indent_str, name.blue(), n.to_string().red());
             }
             DisplayType::ArrayElement => {
-                println!("{}{}", indent_str, n.to_string().red());
+                println!(
+                    "{}{}{}",
+                    indent_str,
+                    n.to_string().red(),
+                    if !is_last { "," } else { "" }
+                );
             }
         },
         VizValue::Float(f) => match display_type {
@@ -42,7 +53,12 @@ pub fn print_prettij(
                 println!("{}{} = {}", indent_str, name.blue(), f.to_string().red());
             }
             DisplayType::ArrayElement => {
-                println!("{}{}", indent_str, f.to_string().red());
+                println!(
+                    "{}{}{}",
+                    indent_str,
+                    f.to_string().red(),
+                    if !is_last { "," } else { "" }
+                );
             }
         },
         VizValue::Null => match display_type {
@@ -50,7 +66,12 @@ pub fn print_prettij(
                 println!("{}{} = {}", indent_str, name.blue(), "null".bright_black());
             }
             DisplayType::ArrayElement => {
-                println!("{}{}", indent_str, "null".bright_black());
+                println!(
+                    "{}{}{}",
+                    indent_str,
+                    "null".bright_black(),
+                    if !is_last { "," } else { "" }
+                );
             }
         },
         VizValue::Bool(b) => match display_type {
@@ -63,7 +84,12 @@ pub fn print_prettij(
                 );
             }
             DisplayType::ArrayElement => {
-                println!("{}{}", indent_str, b.to_string().bright_magenta());
+                println!(
+                    "{}{}{}",
+                    indent_str,
+                    b.to_string().bright_magenta(),
+                    if !is_last { "," } else { "" }
+                );
             }
         },
         VizValue::Array(vec) => {
@@ -74,13 +100,15 @@ pub fn print_prettij(
             }
 
             let next_indent = initial_indent + indent_step;
-            for item in vec.into_iter() {
+            let vec_len = vec.len();
+            for (id, item) in vec.into_iter().enumerate() {
                 print_prettij(
                     "",
                     item,
                     next_indent,
                     indent_step,
                     DisplayType::ArrayElement,
+                    id == vec_len - 1,
                 );
             }
             println!("{indent_str}]");
@@ -93,10 +121,18 @@ pub fn print_prettij(
             }
 
             let next_indent = initial_indent + indent_step;
-            for (k, v) in map.into_iter() {
-                print_prettij(&k, v, next_indent, indent_step, DisplayType::Key);
+            let map_len = map.len();
+            for (id, (k, v)) in map.into_iter().enumerate() {
+                print_prettij(
+                    &k,
+                    v,
+                    next_indent,
+                    indent_step,
+                    DisplayType::Key,
+                    id == map_len - 1,
+                );
             }
-            println!("{indent_str}}}");
+            println!("{indent_str}}}{}", if !is_last { "," } else { "" });
         }
     }
 }
