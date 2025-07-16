@@ -105,7 +105,7 @@ fn print_parsed_data(data: VizValue, indent: usize) {
     if let VizValue::Object(map) = data {
         let entries: Vec<_> = map.into_iter().collect();
         for (key, val) in entries.into_iter() {
-            crate::prints::print_prettij(&key, val, 0, indent, DisplayType::Key, false);
+            crate::prints::print_prettij(&key, val, 0, indent, DisplayType::Key, true);
         }
     } else {
         println!(
