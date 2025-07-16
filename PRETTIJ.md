@@ -23,14 +23,14 @@ float = 3.14
 ##### Arrays
 
 ```
-array = [first second third]
+array = ["first", "second", "third"]
 ```
 
 #### Objects
 
 ```
 object = {
-    key1 = value1
-    key2 = value2
+    key1 = value1,
+    key2 = value2,
 }
 ```
