@@ -15,10 +15,17 @@ anyhow = "1.0.95"
 clap = { version = "4.5.27", features = ["derive"] }
 colored = { version = "3.0.0" }
 indexmap = { version = "2.7.1", features = ["serde"] }
+# TODO: Find approach to make serde optional
 serde = { version = "1.0.217", features = ["derive"] }
-serde_json = { version = "1.0.138", features = ["preserve_order"] }
-toml = { version = "0.9.2", features = ["preserve_order"] }
-yaml = { version = "0.10", package = "yaml-rust2" }
+serde_json = { version = "1.0.138", features = ["preserve_order"], optional = true }
+toml = { version = "0.9.2", features = ["preserve_order"], optional = true}
+yaml-rust2 = { version = "0.10", optional = true }
+
+[features]
+default = ["json", "yaml", "toml"]
+json = ["serde_json"]
+yaml = ["dep:yaml-rust2"]
+toml = ["dep:toml"]
 
 [profile.dev]
 incremental = false

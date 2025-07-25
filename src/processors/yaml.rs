@@ -8,7 +8,7 @@ use anyhow::{Context, Result};
 pub struct YAMLProcessor;
 impl Processor for YAMLProcessor {
     fn process_data(data: &str) -> Result<VizValue, anyhow::Error> {
-        let docs = yaml::YamlLoader::load_from_str(data).context("Failed to load YAML data.")?;
+        let docs = yaml_rust2::YamlLoader::load_from_str(data).context("Failed to load YAML data.")?;
         let yaml_doc = docs
             .into_iter()
             .next()

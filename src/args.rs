@@ -17,6 +17,10 @@ pub struct Cli {
     #[arg(short = 'n', long = "no-color", action = clap::ArgAction::SetTrue)]
     pub no_color: bool,
 
+    /// Display all supported formats.
+    #[arg(short, long, action = clap::ArgAction::SetTrue)]
+    pub formats: bool,
+
     /// Indentation level for output.
     #[arg(short, long, default_value_t = 2)]
     pub indent: usize,

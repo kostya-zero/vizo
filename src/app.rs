@@ -1,6 +1,9 @@
 use crate::args::Cli;
 use crate::prints::DisplayType;
+
+#[allow(unused_imports)]
 use crate::processors::*;
+
 use crate::values::VizValue;
 use anyhow::{Result, anyhow, bail};
 use clap::Parser;
@@ -16,6 +19,10 @@ pub fn run() -> Result<()> {
 
     configure_colors(&cli);
 
+    if cli.formats {
+        print_formats();
+    }
+
     let (contents, extension) = get_content_and_extension(&cli)?;
     let indent = get_indent(&cli)?;
     let data = get_parsed_data(&contents, &extension)?;
@@ -24,6 +31,42 @@ pub fn run() -> Result<()> {
 
     Ok(())
 }
+
+fn print_formats() {
+    let features = get_enabled_formats();
+
+    if features.is_empty() {
+        println!("Your build of Vizo does not contain any format parsers.");
+        exit(1);
+    }
+
+    println!("Supported formats:");
+
+    for f in features {
+        println!("  {f}");
+    }
+
+    exit(0);
+}
+
+fn get_enabled_formats() -> Vec<String> {
+    let mut features = Vec::with_capacity(3);
+
+    if cfg!(feature = "json") {
+        features.push("json".to_string());
+    }
+
+    if cfg!(feature = "yaml") {
+        features.push("yaml".to_string());
+    }
+
+    if cfg!(feature = "toml") {
+        features.push("toml".to_string());
+    }
+
+    features
+}
+
 fn configure_colors(cli: &Cli) {
     let no_color = var("NO_COLOR");
 
@@ -88,14 +131,16 @@ fn get_indent(cli: &Cli) -> Result<usize> {
     Ok(*indent)
 }
 
+#[allow(unused_variables)]
 fn get_parsed_data(contents: &str, extension: &str) -> Result<VizValue> {
     let parsed_data = match extension {
+        #[cfg(feature = "json")]
         "json" => json::JSONProcessor::process_data(contents),
+        #[cfg(feature = "toml")]
         "toml" => toml::TOMLProcessor::process_data(contents),
+        #[cfg(feature = "yaml")]
         "yaml" | "yml" => yaml::YAMLProcessor::process_data(contents),
-        _ => {
-            return Err(anyhow!("unsupported file format."));
-        }
+        _ => Err(anyhow!("unsupported file format.")),
     }?;
 
     Ok(parsed_data)

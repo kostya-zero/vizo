@@ -22,24 +22,25 @@ pub enum VizValue {
 }
 
 impl VizValue {
-    pub fn from_yaml(value: yaml::Yaml) -> Self {
+    #[cfg(feature = "yaml")]
+    pub fn from_yaml(value: yaml_rust2::Yaml) -> Self {
         match value {
-            yaml::Yaml::Null => VizValue::Null,
-            yaml::Yaml::Boolean(b) => VizValue::Bool(b),
-            yaml::Yaml::Integer(i) => VizValue::Number(i),
-            yaml::Yaml::Real(s) => s
+            yaml_rust2::Yaml::Null => VizValue::Null,
+            yaml_rust2::Yaml::Boolean(b) => VizValue::Bool(b),
+            yaml_rust2::Yaml::Integer(i) => VizValue::Number(i),
+            yaml_rust2::Yaml::Real(s) => s
                 .parse::<f64>()
                 .map(|f| VizValue::Number(f as i64))
                 .unwrap_or(VizValue::Null),
-            yaml::Yaml::String(s) => VizValue::String(s),
-            yaml::Yaml::Array(seq) => {
+            yaml_rust2::Yaml::String(s) => VizValue::String(s),
+            yaml_rust2::Yaml::Array(seq) => {
                 VizValue::Array(seq.into_iter().map(VizValue::from_yaml).collect())
             }
-            yaml::Yaml::Hash(map) => {
+            yaml_rust2::Yaml::Hash(map) => {
                 let mut object = IndexMap::new();
                 for (k, v) in map {
                     let key = match k {
-                        yaml::Yaml::String(s) => s,
+                        yaml_rust2::Yaml::String(s) => s,
                         other => other.as_str().unwrap_or("").to_string(),
                     };
                     object.insert(key, VizValue::from_yaml(v));
